@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
-from dash import Dash, Input, Output, dcc, html
+from dash import Dash, Input, Output, State, dcc, html
 
 from calculos import (cobertura_optima, cop, curva_coberturas, evaluar_estrategia, millones, pct,
                       precio_forward, tornado, trm_simulada)
@@ -34,23 +34,40 @@ DERIVAS = {
 ANIO_MIN, ANIO_MAX = serie.index.year.min(), serie.index.year.max()
 MESES = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
 
-# Paleta y plantilla de gráficas
-AZUL, TURQUESA, AMBAR, ROJO, LILA = "#7CC6FE", "#2EE6C5", "#FFC857", "#FF6B81", "#B79CFF"
-TEXTO, TENUE = "#EAF2FB", "rgba(234,242,251,0.62)"
+# Paletas de color para el modo oscuro y el modo claro
+PALETAS = {
+    "oscuro": dict(azul="#7CC6FE", turquesa="#2EE6C5", ambar="#FFC857", rojo="#FF6B81", lila="#B79CFF",
+                   texto="#EAF2FB", tenue="rgba(234,242,251,0.62)", rejilla="rgba(255,255,255,0.08)",
+                   linea="rgba(255,255,255,0.3)", fondo_hover="rgba(12,24,48,0.92)"),
+    "claro": dict(azul="#1F6FEB", turquesa="#0E9F8E", ambar="#D98E04", rojo="#D1495B", lila="#7C5CD6",
+                  texto="#10233F", tenue="rgba(16,35,63,0.62)", rejilla="rgba(16,35,63,0.08)",
+                  linea="rgba(16,35,63,0.35)", fondo_hover="rgba(255,255,255,0.96)"),
+}
 
 
-def estilo(fig, alto=340, leyenda=True):
-    """Aplica el estilo de vidrio a una figura de Plotly."""
+def colores(tema):
+    """Colores de la paleta del tema elegido."""
+    c = PALETAS.get(tema, PALETAS["oscuro"])
+    return c["azul"], c["turquesa"], c["ambar"], c["rojo"], c["lila"], c["texto"], c["tenue"], c["rejilla"], c["linea"]
+
+
+AZUL, TURQUESA, AMBAR, ROJO, LILA, TEXTO, TENUE, REJILLA, LINEA = colores("oscuro")
+
+
+def estilo(fig, alto=340, leyenda=True, tema="oscuro"):
+    """Aplica el estilo de vidrio a una figura de Plotly según el tema."""
+    c = PALETAS.get(tema, PALETAS["oscuro"])
+    TEXTO, TENUE, REJILLA = c["texto"], c["tenue"], c["rejilla"]
     fig.update_layout(
         height=alto, margin=dict(l=10, r=10, t=10, b=10), paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)", font=dict(family="Inter, Segoe UI, sans-serif", color=TEXTO, size=12),
         hovermode="x unified", showlegend=leyenda,
         legend=dict(orientation="h", y=1.08, x=0, bgcolor="rgba(0,0,0,0)", font=dict(color=TENUE)),
-        hoverlabel=dict(bgcolor="rgba(12,24,48,0.92)", bordercolor="rgba(255,255,255,0.25)", font=dict(color=TEXTO)),
+        hoverlabel=dict(bgcolor=c["fondo_hover"], bordercolor=c["linea"], font=dict(color=TEXTO)),
         separators=",.",
     )
-    fig.update_xaxes(gridcolor="rgba(255,255,255,0.07)", zeroline=False, color=TENUE, linecolor="rgba(255,255,255,0.15)")
-    fig.update_yaxes(gridcolor="rgba(255,255,255,0.07)", zeroline=False, color=TENUE)
+    fig.update_xaxes(gridcolor=REJILLA, zeroline=False, color=TENUE, linecolor=REJILLA)
+    fig.update_yaxes(gridcolor=REJILLA, zeroline=False, color=TENUE)
     return fig
 
 
@@ -118,9 +135,14 @@ cabecera = html.Header(className="cabecera", children=[
         html.H1("¿Cubrir o no cubrir el dólar?"),
         html.P("Decisión de cobertura con forward para una importadora que paga a sus proveedores en dólares a 3 y 6 meses."),
     ]),
-    html.Div(className="sello vidrio", children=[
-        html.Span("Datos al", className="kpi-titulo"), html.Strong(fecha_texto),
-        html.Span(f"TRM {cop(SPOT, 2)}", className="kpi-detalle"),
+    html.Div(className="cabecera-derecha", children=[
+        html.Button(id="boton-tema", className="boton-tema vidrio", n_clicks=0, title="Cambiar entre modo claro y oscuro",
+                    children=[html.Span("☀", className="icono-sol"), html.Span("☾", className="icono-luna"),
+                              html.Span(id="texto-tema", children="Modo claro")]),
+        html.Div(className="sello vidrio", children=[
+            html.Span("Datos al", className="kpi-titulo"), html.Strong(fecha_texto),
+            html.Span(f"TRM {cop(SPOT, 2)}", className="kpi-detalle"),
+        ]),
     ]),
 ])
 
@@ -256,7 +278,8 @@ pestana_backtest = html.Div(children=[
           dcc.Graph(id="g-backtest", config={"displayModeBar": False}), ayuda=AYUDAS["backtest"]),
 ])
 
-app.layout = html.Div(className="fondo", children=[
+app.layout = html.Div(id="raiz", className="fondo", children=[
+    dcc.Store(id="tema", storage_type="local", data="oscuro"),
     html.Div(className="mancha m1"), html.Div(className="mancha m2"), html.Div(className="mancha m3"),
     html.Main(className="contenedor", children=[
         cabecera,
@@ -281,15 +304,30 @@ app.layout = html.Div(className="fondo", children=[
 ])
 
 
+@app.callback(Output("tema", "data"), Input("boton-tema", "n_clicks"), State("tema", "data"), prevent_initial_call=True)
+def cambiar_tema(clics, tema):
+    """Alterna entre el modo oscuro y el modo claro."""
+    return "claro" if tema == "oscuro" else "oscuro"
+
+
+@app.callback(Output("raiz", "className"), Output("texto-tema", "children"), Input("tema", "data"))
+def aplicar_tema(tema):
+    """Aplica la clase del tema a toda la página."""
+    if tema == "claro":
+        return "fondo claro", "Modo oscuro"
+    return "fondo", "Modo claro"
+
+
 def filtrar(df, rango):
     """Recorta una tabla al rango de años elegido."""
     return df.loc[str(rango[0]):str(rango[1])]
 
 
 @app.callback(Output("g-trm", "figure"), Output("g-macro", "figure"), Output("g-caja-anual", "figure"),
-              Input("rango-anios", "value"), Input("ver-brent", "value"))
-def actualizar_contexto(rango, ver_brent):
+              Input("rango-anios", "value"), Input("ver-brent", "value"), Input("tema", "data"))
+def actualizar_contexto(rango, ver_brent, tema="oscuro"):
     """Gráficas de la pestaña de contexto."""
+    AZUL, TURQUESA, AMBAR, ROJO, LILA, TEXTO, TENUE, REJILLA, LINEA = colores(tema)
     d = filtrar(serie, rango)
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=d.index, y=d["banda_superior"], line=dict(width=0), hoverinfo="skip", showlegend=False))
@@ -303,7 +341,7 @@ def actualizar_contexto(rango, ver_brent):
                                  line=dict(color=AMBAR, width=0.9), opacity=0.5, hovertemplate="US$ %{y:.1f}"))
     fig.update_layout(yaxis=dict(title="COP por USD", tickformat=",.0f"),
                       yaxis2=dict(overlaying="y", side="right", showgrid=False, color=AMBAR, title="US$ por barril", tickformat=".0f", nticks=6))
-    estilo(fig, 380)
+    estilo(fig, 380, tema=tema)
 
     m = filtrar(macro, rango)
     fig2 = go.Figure()
@@ -324,17 +362,18 @@ def actualizar_contexto(rango, ver_brent):
     fig3.update_traces(fillcolor="rgba(255,200,87,0.25)", selector=dict(name=str(ANIO_MAX)))
     fig3.update_yaxes(title="COP por USD", tickformat=",.0f")
     fig3.update_layout(hovermode="closest")
-    return fig, estilo(fig2, 380), estilo(fig3, 320, leyenda=False)
+    return fig, estilo(fig2, 380, tema=tema), estilo(fig3, 320, leyenda=False, tema=tema)
 
 
 @app.callback(Output("g-vol", "figure"), Output("g-dispersion", "figure"), Output("g-corr", "figure"), Output("g-hist", "figure"),
               Output("g-caja-mes", "figure"), Output("g-calor", "figure"), Output("g-caja-retornos", "figure"),
-              Input("rango-anios", "value"))
-def actualizar_riesgo(rango):
+              Input("rango-anios", "value"), Input("tema", "data"))
+def actualizar_riesgo(rango, tema="oscuro"):
     """Gráficas de la pestaña de riesgo."""
+    AZUL, TURQUESA, AMBAR, ROJO, LILA, TEXTO, TENUE, REJILLA, LINEA = colores(tema)
     d = filtrar(serie, rango)
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=d.index, y=d["vol_21d"], name="Móvil 21 días", line=dict(color="rgba(234,242,251,0.45)", width=1)))
+    fig.add_trace(go.Scatter(x=d.index, y=d["vol_21d"], name="Móvil 21 días", line=dict(color=TENUE, width=1)))
     fig.add_trace(go.Scatter(x=d.index, y=d["vol_garch"], name="GJR-GARCH", line=dict(color=ROJO, width=1.8),
                              fill="tozeroy", fillcolor="rgba(255,107,129,0.10)"))
     fig.update_yaxes(tickformat=".0%")
@@ -363,7 +402,7 @@ def actualizar_riesgo(rango):
     fig3 = go.Figure()
     for nombre, color in zip(c.columns, (AMBAR, TURQUESA, LILA)):
         fig3.add_trace(go.Scatter(x=c.index, y=c[nombre], name=nombre, line=dict(color=color, width=1.8), hovertemplate="%{y:.2f}"))
-    fig3.add_hline(y=0, line=dict(color="rgba(255,255,255,0.3)", width=1))
+    fig3.add_hline(y=0, line=dict(color=LINEA, width=1))
 
     r = w["trm"]
     fig4 = go.Figure()
@@ -382,7 +421,7 @@ def actualizar_riesgo(rango):
         fig5.add_trace(go.Box(y=valores, name=nombre, marker=dict(color=AZUL, size=4), line=dict(width=1.4, color=AZUL),
                               fillcolor="rgba(124,198,254,0.18)", boxpoints="all", jitter=0.4, pointpos=0,
                               customdata=valores.index.year, hovertemplate="%{customdata}: %{y:.1%}<extra></extra>"))
-    fig5.add_hline(y=0, line=dict(color="rgba(255,255,255,0.3)", width=1))
+    fig5.add_hline(y=0, line=dict(color=LINEA, width=1))
     fig5.update_yaxes(tickformat=".0%", title="Retorno mensual")
     fig5.update_layout(hovermode="closest")
 
@@ -390,7 +429,7 @@ def actualizar_riesgo(rango):
                "ecopetrol_adr": "Ecopetrol", "sp500": "S&P 500", "oro": "Oro"}
     matriz = w[list(nombres)].rename(columns=nombres).corr()
     fig6 = go.Figure(go.Heatmap(z=matriz.values, x=matriz.columns, y=matriz.index, zmin=-1, zmax=1,
-                                colorscale=[[0, ROJO], [0.5, "rgba(255,255,255,0.06)"], [1, TURQUESA]],
+                                colorscale=[[0, ROJO], [0.5, REJILLA], [1, TURQUESA]],
                                 texttemplate="%{z:.2f}", textfont=dict(size=11, color=TEXTO), xgap=3, ygap=3,
                                 hovertemplate="%{y} y %{x}: %{z:.2f}<extra></extra>", colorbar=dict(thickness=10, outlinewidth=0)))
     fig6.update_yaxes(autorange="reversed", showgrid=False)
@@ -404,8 +443,8 @@ def actualizar_riesgo(rango):
                               fillcolor="rgba(183,156,255,0.18)", boxpoints="outliers", hovertemplate="%{y:.2%}<extra></extra>"))
     fig7.update_yaxes(tickformat=".1%", title="Retorno diario")
     fig7.update_layout(hovermode="closest")
-    return (estilo(fig, 320), estilo(fig2, 320), estilo(fig3, 300), estilo(fig4, 300),
-            estilo(fig5, 330, leyenda=False), estilo(fig6, 330, leyenda=False), estilo(fig7, 320, leyenda=False))
+    return (estilo(fig, 320, tema=tema), estilo(fig2, 320, tema=tema), estilo(fig3, 300, tema=tema), estilo(fig4, 300, tema=tema),
+            estilo(fig5, 330, leyenda=False, tema=tema), estilo(fig6, 330, leyenda=False, tema=tema), estilo(fig7, 320, leyenda=False, tema=tema))
 
 
 @app.callback(
@@ -413,10 +452,12 @@ def actualizar_riesgo(rango):
     Output("g-curva", "figure"), Output("g-tornado", "figure"), Output("g-caja-costos", "figure"),
     Input("plazo", "value"), Input("cobertura", "value"), Input("monto", "value"), Input("presupuesto", "value"),
     Input("tasa-cop", "value"), Input("tasa-usd", "value"), Input("recargo", "value"), Input("margen-obj", "value"),
-    Input("margen-min", "value"), Input("tolerancia", "value"), Input("deriva", "value"),
+    Input("margen-min", "value"), Input("tolerancia", "value"), Input("deriva", "value"), Input("tema", "data"),
 )
-def actualizar_decision(plazo, cobertura, monto, presupuesto, tasa_cop, tasa_usd, recargo, margen_obj, margen_min, tolerancia, deriva):
+def actualizar_decision(plazo, cobertura, monto, presupuesto, tasa_cop, tasa_usd, recargo, margen_obj, margen_min, tolerancia, deriva,
+                        tema="oscuro"):
     """Simulación, métricas y recomendación para los supuestos elegidos."""
+    AZUL, TURQUESA, AMBAR, ROJO, LILA, TEXTO, TENUE, REJILLA, LINEA = colores(tema)
     presupuesto = presupuesto or M["presupuesto"]
     tasa_cop = (tasa_cop if tasa_cop is not None else M["tasa_cop"] * 100) / 100
     tasa_usd = (tasa_usd if tasa_usd is not None else M["tasa_usd"] * 100) / 100
@@ -501,7 +542,7 @@ def actualizar_decision(plazo, cobertura, monto, presupuesto, tasa_cop, tasa_usd
                           marker=dict(color=ROJO), hovertemplate="%{base:,.1f} M<extra></extra>"))
     fig3.add_trace(go.Bar(y=tabla["variable"], x=(mayores - base) / 1e6, base=base / 1e6, orientation="h", name="Escenario favorable",
                           marker=dict(color=TURQUESA), hovertemplate="%{x:,.1f} M sobre la base<extra></extra>"))
-    fig3.add_vline(x=base / 1e6, line=dict(color="white", width=1.5))
+    fig3.add_vline(x=base / 1e6, line=dict(color=TEXTO, width=1.5))
     fig3.update_layout(barmode="overlay", hovermode="closest")
     fig3.update_xaxes(title="Utilidad bruta (millones de COP)", tickformat=",.0f")
 
@@ -520,12 +561,13 @@ def actualizar_decision(plazo, cobertura, monto, presupuesto, tasa_cop, tasa_usd
     fig4.update_yaxes(title="Costo (millones de COP)", tickformat=",.0f")
     fig4.update_xaxes(title="Porcentaje cubierto")
     fig4.update_layout(hovermode="closest")
-    return kpis, texto, estilo(fig, 330), estilo(fig2, 330), estilo(fig3, 330, leyenda=False), estilo(fig4, 330, leyenda=False)
+    return kpis, texto, estilo(fig, 330, tema=tema), estilo(fig2, 330, tema=tema), estilo(fig3, 330, leyenda=False, tema=tema), estilo(fig4, 330, leyenda=False, tema=tema)
 
 
-@app.callback(Output("kpis-backtest", "children"), Output("g-backtest", "figure"), Input("plazo-bt", "value"))
-def actualizar_backtest(plazo):
+@app.callback(Output("kpis-backtest", "children"), Output("g-backtest", "figure"), Input("plazo-bt", "value"), Input("tema", "data"))
+def actualizar_backtest(plazo, tema="oscuro"):
     """Resultado histórico de cubrir cada mes desde 2015."""
+    AZUL, TURQUESA, AMBAR, ROJO, LILA, TEXTO, TENUE, REJILLA, LINEA = colores(tema)
     d = historico[historico["plazo"] == plazo]
     a = d["ahorro_cubrir_pct"]
     var_sin = (d["trm_final"] / d["trm_inicial"] - 1).std()
@@ -543,7 +585,7 @@ def actualizar_backtest(plazo):
                                          "<br>Forward %{customdata[1]:,.0f}<br>TRM final %{customdata[2]:,.0f}<extra></extra>"))
     fig.update_yaxes(tickformat=".0%")
     fig.update_layout(hovermode="closest")
-    return kpis, estilo(fig, 380, leyenda=False)
+    return kpis, estilo(fig, 380, leyenda=False, tema=tema)
 
 
 if __name__ == "__main__":

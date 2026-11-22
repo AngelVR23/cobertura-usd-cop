@@ -24,7 +24,7 @@ documento/
   documento_tecnico.pdf   versión compilada
   figuras/                gráficas exportadas por el notebook
 dashboard/
-  app.py, calculos.py     tablero en Dash
+  app.py, calculos.py     tablero en Dash (modo claro y oscuro)
   assets/estilos.css      estilo visual
   datos/                  archivos que exporta el notebook para el tablero
   requirements.txt        dependencias para Posit Connect Cloud
