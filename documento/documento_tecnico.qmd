@@ -77,7 +77,7 @@ fecha_txt = f"{fecha.day} de {meses[fecha.month - 1]} de {fecha.year}"
 INTEGRANTES = [
     ("Angel Vega Rodríguez", "T00068186"),
     ("Germán De Armas", "T00068765"),
-    ("María Valentina Serna", "67756"),
+    ("María Valentina Serna", "T00067756"),
     ("Luis Mario Díaz", "T00069220"),
     ("Daniel Castillo", "T00091828"),
 ]
