@@ -1,0 +1,470 @@
+{
+  "datos": {
+    "inicio": "2015-01-03",
+    "fin": "2026-11-21",
+    "obs_trm": 2815,
+    "semanas": 621,
+    "meses": 143,
+    "atipicos_yahoo": 14,
+    "duplicados_trm": 0
+  },
+  "eda": {
+    "vol_anual": 0.13092928064610762,
+    "curtosis": 2.264531253773555,
+    "asimetria": 0.30675928149299964,
+    "jb_p": 7.119129180149638e-141,
+    "peor_dia": -0.03590051178707654,
+    "mejor_dia": 0.05930667430644476,
+    "vol_21d_actual": 0.11917939663154663,
+    "vol_21d_max": 0.35053064754925667,
+    "fecha_vol_max": "2020-04-08",
+    "corr_brent": -0.2761911854276324,
+    "corr_dxy": 0.271528016347078,
+    "corr_ecopetrol": -0.4951429263326412,
+    "corr_sp500": -0.29915214912752947,
+    "corr_movil_brent_min": -0.6589786152755802,
+    "corr_movil_brent_max": 0.17599208533403415,
+    "kw_p": 0.7937474873325313,
+    "dif_trm_yahoo_abs": 0.004558461749191935,
+    "trm_min": 2360.58,
+    "fecha_trm_min": "2015-05-09",
+    "trm_max": 5061.21,
+    "fecha_trm_max": "2022-11-05"
+  },
+  "regresion": {
+    "beta_brent": -0.08375796770522831,
+    "p_brent": 1.4142010490795688e-06,
+    "beta_dxy": 0.46237559493884495,
+    "p_dxy": 6.867326197928456e-07,
+    "beta_sp500": -0.1666070322145145,
+    "p_sp500": 9.499635658778325e-06,
+    "r2": 0.17547678698900926,
+    "n": 620,
+    "loglog_brent": 0.08574944576762045,
+    "loglog_dxy": 1.7664833403540443,
+    "loglog_r2": 0.3577703170095391,
+    "adf_p": 0.05382273682849936
+  },
+  "garch": {
+    "omega": 0.02026924909757045,
+    "alpha": 0.11248399678784167,
+    "gamma": -0.05681157562122168,
+    "beta": 0.8883847224169632,
+    "nu": 9.891478764401244,
+    "p_gamma": 0.007976601589514095,
+    "persistencia": 0.972462931394194,
+    "vida_media": 24.82323573575906,
+    "vol_actual": 0.173527858907667,
+    "vol_ewma": 0.1492827613541353,
+    "arch_lm_p": 7.745881118497986e-47
+  },
+  "mercado": {
+    "fecha_decision": "2026-11-21",
+    "spot": 3461.92,
+    "tasa_cop": 0.1225,
+    "tasa_usd": 0.03875,
+    "mes_tasas": "2026-10",
+    "presupuesto": 3489.793760683761,
+    "forward_3": 3534.978767418097,
+    "forward_6": 3604.173073850646,
+    "pasos_3": 59,
+    "pasos_6": 118,
+    "obs_anuales": 237.0,
+    "deriva_historica": 0.0001326609438244966,
+    "inflacion_col": 6.2898,
+    "inflacion_eeuu": 3.737685,
+    "brent": 89.94999694824219,
+    "indice_dolar": 103.80999755859375
+  },
+  "supuestos": {
+    "monto_usd": 250000,
+    "margen_objetivo": 0.25,
+    "margen_minimo": 0.15,
+    "margen_banco": 0.0015,
+    "tolerancia_riesgo": 0.05,
+    "meses_presupuesto": 12
+  },
+  "simulacion": [
+    {
+      "plazo": 3,
+      "deriva": "Paseo aleatorio",
+      "media": 3470.7511526542,
+      "p5": 3074.1841383172,
+      "mediana": 3445.1147663561,
+      "p95": 3946.486835086,
+      "prob_sobre_forward": 0.3693,
+      "prob_sobre_presupuesto": 0.4323
+    },
+    {
+      "plazo": 3,
+      "deriva": "Tendencia histórica",
+      "media": 3498.0232972024,
+      "p5": 3098.3401755842,
+      "mediana": 3472.1854677002,
+      "p95": 3977.4971710884,
+      "prob_sobre_forward": 0.4051,
+      "prob_sobre_presupuesto": 0.4728
+    },
+    {
+      "plazo": 3,
+      "deriva": "Paridad de tasas",
+      "media": 3538.3988262784,
+      "p5": 3134.1024084849,
+      "mediana": 3512.2627666195,
+      "p95": 4023.4069718634,
+      "prob_sobre_forward": 0.4653,
+      "prob_sobre_presupuesto": 0.5384
+    },
+    {
+      "plazo": 6,
+      "deriva": "Paseo aleatorio",
+      "media": 3480.3263422699,
+      "p5": 2956.6715889242,
+      "mediana": 3444.225981309,
+      "p95": 4124.0133872241,
+      "prob_sobre_forward": 0.3185,
+      "prob_sobre_presupuesto": 0.447
+    },
+    {
+      "plazo": 6,
+      "deriva": "Tendencia histórica",
+      "media": 3535.2359971482,
+      "p5": 3003.3194605806,
+      "mediana": 3498.5660751271,
+      "p95": 4189.0785936261,
+      "prob_sobre_forward": 0.3795,
+      "prob_sobre_presupuesto": 0.5099
+    },
+    {
+      "plazo": 6,
+      "deriva": "Paridad de tasas",
+      "media": 3617.3170894595,
+      "p5": 3073.0505173143,
+      "mediana": 3579.795765366,
+      "p95": 4286.3406001852,
+      "prob_sobre_forward": 0.4716,
+      "prob_sobre_presupuesto": 0.6123
+    }
+  ],
+  "validacion": [
+    {
+      "plazo": 3,
+      "metodo": "Triangular histórica",
+      "min": -0.1150572111,
+      "moda": 0.0035854913,
+      "max": 0.1843798366,
+      "p5": 3208.1486941552,
+      "mediana": 3529.6914987546,
+      "p95": 3920.1204828897
+    },
+    {
+      "plazo": 3,
+      "metodo": "GJR-GARCH",
+      "min": null,
+      "moda": null,
+      "max": null,
+      "p5": 3074.1841383172,
+      "mediana": 3445.1147663561,
+      "p95": 3946.486835086
+    },
+    {
+      "plazo": 6,
+      "metodo": "Triangular histórica",
+      "min": -0.1415160317,
+      "moda": 0.0100604685,
+      "max": 0.2274873613,
+      "p5": 3158.2503141078,
+      "mediana": 3561.4063371191,
+      "p95": 4030.0399042259
+    },
+    {
+      "plazo": 6,
+      "metodo": "GJR-GARCH",
+      "min": null,
+      "moda": null,
+      "max": null,
+      "p5": 2956.6715889242,
+      "mediana": 3444.225981309,
+      "p95": 4124.0133872241
+    }
+  ],
+  "estrategias": [
+    {
+      "cobertura": 0.0,
+      "costo_esperado": 867687788.1635481,
+      "costo_p5": 768546034.5792891,
+      "costo_p95": 986621708.771512,
+      "cvar95": 1038157325.1583295,
+      "desv_costo": 68954878.70270929,
+      "desviacion_presupuesto": -4760652.007392049,
+      "prob_superar_presupuesto": 0.4323,
+      "margen_esperado": 0.2540924929,
+      "margen_p5": 0.1518509891,
+      "prob_margen_bajo": 0.0476,
+      "utilidad_esperada": 295576798.7310387,
+      "prob_perdida": 0.0019,
+      "plazo": 3,
+      "ahorro_esperado": 0.0,
+      "reduccion_p95": 0.0
+    },
+    {
+      "cobertura": 0.5,
+      "costo_esperado": 875716240.0090363,
+      "costo_p5": 826145363.2169065,
+      "costo_p95": 935183200.3130182,
+      "cvar95": 960951008.5064268,
+      "desv_costo": 34477439.35135464,
+      "desviacion_presupuesto": 3267799.838096142,
+      "prob_superar_presupuesto": 0.5006,
+      "margen_esperado": 0.247190837,
+      "margen_p5": 0.1960700851,
+      "prob_margen_bajo": 0.0061,
+      "utilidad_esperada": 287548346.88555056,
+      "prob_perdida": 0.0001,
+      "plazo": 3,
+      "ahorro_esperado": -8028451.845488191,
+      "reduccion_p95": 51438508.45849383
+    },
+    {
+      "cobertura": 1.0,
+      "costo_esperado": 883744691.8545246,
+      "costo_p5": 883744691.8545243,
+      "costo_p95": 883744691.8545243,
+      "cvar95": 883744691.8545246,
+      "desv_costo": 3.576e-07,
+      "desviacion_presupuesto": 11296251.683584452,
+      "prob_superar_presupuesto": 1.0,
+      "margen_esperado": 0.2402891811,
+      "margen_p5": 0.2402891811,
+      "prob_margen_bajo": 0.0,
+      "utilidad_esperada": 279519895.0400624,
+      "prob_perdida": 0.0,
+      "plazo": 3,
+      "ahorro_esperado": -16056903.6909765,
+      "reduccion_p95": 102877016.91698778
+    },
+    {
+      "cobertura": 0.0,
+      "costo_esperado": 870081585.5674639,
+      "costo_p5": 739167897.2310615,
+      "costo_p95": 1031003346.8060254,
+      "cvar95": 1099250721.1145313,
+      "desv_costo": 91278131.57043818,
+      "desviacion_presupuesto": -2366854.603476286,
+      "prob_superar_presupuesto": 0.447,
+      "margen_esperado": 0.2520346657,
+      "margen_p5": 0.1136983293,
+      "prob_margen_bajo": 0.0943,
+      "utilidad_esperada": 293183001.3271229,
+      "prob_perdida": 0.0069,
+      "plazo": 6,
+      "ahorro_esperado": 0.0,
+      "reduccion_p95": 0.0
+    },
+    {
+      "cobertura": 0.5,
+      "costo_esperado": 885562427.0150625,
+      "costo_p5": 820105582.8468615,
+      "costo_p95": 966023307.6343435,
+      "cvar95": 1000146994.7885964,
+      "desv_costo": 45639065.785219096,
+      "desviacion_presupuesto": 13113986.84412229,
+      "prob_superar_presupuesto": 0.5894,
+      "margen_esperado": 0.2387265657,
+      "margen_p5": 0.1695583975,
+      "prob_margen_bajo": 0.0253,
+      "utilidad_esperada": 277702159.8795241,
+      "prob_perdida": 0.0002,
+      "plazo": 6,
+      "ahorro_esperado": -15480841.447598577,
+      "reduccion_p95": 64980039.17168188
+    },
+    {
+      "cobertura": 1.0,
+      "costo_esperado": 901043268.4626617,
+      "costo_p5": 901043268.4626614,
+      "costo_p95": 901043268.4626614,
+      "cvar95": 901043268.4626617,
+      "desv_costo": 3.576e-07,
+      "desviacion_presupuesto": 28594828.291721582,
+      "prob_superar_presupuesto": 1.0,
+      "margen_esperado": 0.2254184657,
+      "margen_p5": 0.2254184657,
+      "prob_margen_bajo": 0.0,
+      "utilidad_esperada": 262221318.43192536,
+      "prob_perdida": 0.0,
+      "plazo": 6,
+      "ahorro_esperado": -30961682.89519787,
+      "reduccion_p95": 129960078.343364
+    }
+  ],
+  "optimas": {
+    "3": {
+      "cobertura": 0.0,
+      "costo_esperado": 867687788.1635481,
+      "costo_p5": 768546034.5792891,
+      "costo_p95": 986621708.771512,
+      "cvar95": 1038157325.1583295,
+      "desv_costo": 68954878.70270929,
+      "desviacion_presupuesto": -4760652.007392049,
+      "prob_superar_presupuesto": 0.4323,
+      "margen_esperado": 0.25409249285246516,
+      "margen_p5": 0.15185098911558448,
+      "prob_margen_bajo": 0.0476,
+      "utilidad_esperada": 295576798.7310387,
+      "prob_perdida": 0.0019,
+      "plazo": 3.0,
+      "ahorro_esperado": 0.0,
+      "reduccion_p95": 0.0
+    },
+    "6": {
+      "cobertura": 0.35,
+      "costo_esperado": 880918174.580783,
+      "costo_p5": 795824277.1621214,
+      "costo_p95": 985517319.385848,
+      "cvar95": 1029878112.6863769,
+      "desv_costo": 59330785.520784825,
+      "desviacion_presupuesto": 8469734.409842849,
+      "prob_superar_presupuesto": 0.519,
+      "margen_esperado": 0.24271899574244457,
+      "margen_p5": 0.15280037706919888,
+      "prob_margen_bajo": 0.0458,
+      "utilidad_esperada": 282346412.31380373,
+      "prob_perdida": 0.0015,
+      "plazo": 6.0,
+      "ahorro_esperado": -10836589.013319135,
+      "reduccion_p95": 45486027.42017734
+    }
+  },
+  "tornado": [
+    {
+      "variable": "TRM al vencimiento (P5 / mediana / P95)",
+      "valor_bajo": 2956.6715889242,
+      "valor_alto": 4124.0133872241,
+      "utilidad_bajo": 367440309.7324654,
+      "utilidad_alto": 177747267.50873888,
+      "rango": 189693042.2237265
+    },
+    {
+      "variable": "Margen objetivo de venta (20 % / 25 % / 30 %)",
+      "valor_bajo": 0.2,
+      "valor_alto": 0.3,
+      "utilidad_bajo": 215508684.28903532,
+      "utilidad_alto": 371303048.6052749,
+      "rango": 155794364.3162396
+    },
+    {
+      "variable": "Monto de la compra (USD ±20 %)",
+      "valor_bajo": 200000.0,
+      "valor_alto": 300000.0,
+      "utilidad_bajo": 230570176.7759577,
+      "utilidad_alto": 345855265.16393685,
+      "rango": 115285088.38797915
+    },
+    {
+      "variable": "Porcentaje cubierto (0 % / base / 100 %)",
+      "valor_bajo": 0.0,
+      "valor_alto": 1.0,
+      "utilidad_bajo": 302208091.56734324,
+      "utilidad_alto": 262221318.43192542,
+      "rango": 39986773.13541782
+    },
+    {
+      "variable": "Diferencial de tasas (±2 p.p.)",
+      "valor_bajo": 0.06375,
+      "valor_alto": 0.10375,
+      "utilidad_bajo": 291034837.1750853,
+      "utilidad_alto": 285415636.1037601,
+      "rango": 5619201.071325183
+    },
+    {
+      "variable": "Recargo del banco (0 % / 0,15 % / 0,40 %)",
+      "valor_bajo": 0.0,
+      "valor_alto": 0.004,
+      "utilidad_bajo": 288685060.1770793,
+      "utilidad_alto": 287425488.95806,
+      "rango": 1259571.2190192938
+    }
+  ],
+  "tornado_base": {
+    "utilidad_base": 288212720.9699471,
+    "plazo": 6,
+    "cobertura": 0.35
+  },
+  "sensibilidad_deriva": [
+    {
+      "deriva": "Paseo aleatorio",
+      "plazo": 3,
+      "cobertura": 0.0,
+      "costo_esperado": 867687788.1635481,
+      "prob_margen_bajo": 0.0476,
+      "prob_margen_bajo_sin_cubrir": 0.0476
+    },
+    {
+      "deriva": "Paseo aleatorio",
+      "plazo": 6,
+      "cobertura": 0.35,
+      "costo_esperado": 880918174.580783,
+      "prob_margen_bajo": 0.0458,
+      "prob_margen_bajo_sin_cubrir": 0.0943
+    },
+    {
+      "deriva": "Tendencia histórica",
+      "plazo": 3,
+      "cobertura": 0.1,
+      "costo_esperado": 875429711.056001,
+      "prob_margen_bajo": 0.0443,
+      "prob_margen_bajo_sin_cubrir": 0.0562
+    },
+    {
+      "deriva": "Tendencia histórica",
+      "plazo": 6,
+      "cobertura": 0.45,
+      "costo_esperado": 891564420.4160769,
+      "prob_margen_bajo": 0.0402,
+      "prob_margen_bajo_sin_cubrir": 0.1194
+    },
+    {
+      "deriva": "Paridad de tasas",
+      "plazo": 3,
+      "cobertura": 1.0,
+      "costo_esperado": 883744691.8545246,
+      "prob_margen_bajo": 0.0,
+      "prob_margen_bajo_sin_cubrir": 0.0722
+    },
+    {
+      "deriva": "Paridad de tasas",
+      "plazo": 6,
+      "cobertura": 1.0,
+      "costo_esperado": 901043268.4626617,
+      "prob_margen_bajo": 0.0,
+      "prob_margen_bajo_sin_cubrir": 0.1638
+    }
+  ],
+  "backtest": [
+    {
+      "plazo": 3,
+      "meses": 140,
+      "prob_cubrir_gano": 0.45,
+      "ahorro_medio": -0.0042781142,
+      "ahorro_mediano": -0.0095885206,
+      "peor_sin_cubrir": 0.2396242615,
+      "peor_cubriendo": -0.1595642025,
+      "desv_sin_cubrir": 0.0695549955,
+      "desv_cubriendo": 0.0049624159
+    },
+    {
+      "plazo": 6,
+      "meses": 137,
+      "prob_cubrir_gano": 0.4525547445,
+      "ahorro_medio": -0.0074199206,
+      "ahorro_mediano": -0.0113728173,
+      "peor_sin_cubrir": 0.2485138927,
+      "peor_cubriendo": -0.2022874885,
+      "desv_sin_cubrir": 0.0934802421,
+      "desv_cubriendo": 0.0098970229
+    }
+  ],
+  "semilla": 42,
+  "n_sim": 10000
+}

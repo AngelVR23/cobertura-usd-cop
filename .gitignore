@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+.ipynb_checkpoints/
+documento/.quarto/
+documento/*.typ
+!documento/estilo.typ
+documento/*_files/
+.claude/
+CLAUDE.md
