@@ -73,24 +73,70 @@ fecha_txt = f"{fecha.day} de {meses[fecha.month - 1]} de {fecha.year}"
 
 ```{python}
 #| output: asis
-## Portada con las cifras clave de la decisión
+## Portada e índice
+INTEGRANTES = [
+    ("Angel Vega Rodríguez", "T00068186"),
+    ("Germán De Armas", "T00068765"),
+    ("María Valentina Serna", "67756"),
+    ("Luis Mario Díaz", "T00069220"),
+    ("Daniel Castillo", "T00091828"),
+]
+filas_integrantes = ", ".join(f"[{n}], [{c}]" for n, c in INTEGRANTES)
+cerca = "`" * 3
+print(f"""
+{cerca}{{=typst}}
+#set page(numbering: none, margin: (x: 2.2cm, y: 2cm))
+#portada-logos("logos/logo_utb.png", "logos/logo_etd.png")
+#v(1fr)
+#align(center)[
+  #text(size: 9pt, tracking: 2pt, fill: turquesa, weight: "bold")[DOCUMENTO TÉCNICO · PROYECTO FINAL]
+  #v(8pt)
+  #text(size: 24pt, weight: "bold", fill: azul)[Cobertura cambiaria USD/COP #linebreak() para una importadora de Cartagena]
+  #v(8pt)
+  #text(size: 12pt, style: "italic", fill: rgb("#4A5A70"))[¿Conviene fijar hoy el dólar de los pagos a 3 y 6 meses, y en qué proporción?]
+]
+#v(1fr)
+#align(center)[
+  #block(width: 62%)[
+    #set text(size: 10pt)
+    #table(columns: (1fr, auto), align: (left, center), inset: 6pt,
+      [Integrante], [Código], {filas_integrantes})
+  ]
+]
+#v(1fr)
+#align(center)[
+  #set text(size: 10pt, fill: rgb("#33415A"))
+  *Toma de decisiones basadas en datos* #linebreak()
+  Profesor Fernando Salcedo Mejía #linebreak()
+  Programa de Ciencia de Datos · Escuela de Transformación Digital #linebreak()
+  Universidad Tecnológica de Bolívar #linebreak()
+  Cartagena de Indias, noviembre de 2026
+]
+#pagebreak()
+#outline(title: [Índice], indent: 0pt, depth: 2)
+#set page(numbering: "1", margin: (x: 1.7cm, y: 1.5cm))
+#counter(page).update(1)
+#heading(level: 2, "1. Introducción")
+{cerca}
+""")
+```
+
+El peso colombiano es una de las monedas más volátiles de la región. Entre 2015 y 2026 la TRM pasó de unos 2.400 a más de 5.000 pesos por dólar y volvió a la zona de 3.500, con saltos de varios cientos de pesos en pocas semanas. Para una empresa que importa en dólares y vende en pesos, ese movimiento se traduce directamente en su margen. Este trabajo estudia una decisión concreta de gestión de ese riesgo, la de cubrir o no con un contrato forward los pagos a proveedores que vencen en 3 y 6 meses.
+
+El análisis sigue las etapas del proceso analítico del curso. Primero se define el problema, la decisión y las métricas. Luego se descargan y limpian datos reales de la TRM, el petróleo, el dólar global y las tasas de interés, y se exploran con estadística descriptiva, regresión y un modelo de volatilidad. Con eso se simulan 10.000 escenarios del dólar por Monte Carlo, se comparan estrategias de cobertura, se mide la sensibilidad con un tornado y se contrasta el resultado con un backtest histórico. Todo se acompaña de un tablero interactivo en Dash donde se pueden cambiar los supuestos.
+
+```{python}
+#| output: asis
+## Cifras clave de la decisión
 tarjetas = [
     ("TRM vigente", cop(M["spot"], 2), fecha_txt),
     ("Forward a 6 meses", cop(M["forward_6"], 2), f"{pct(M['forward_6'] / M['spot'] - 1)} sobre la TRM"),
     ("Cobertura sugerida a 6 meses", pct(opt6["cobertura"], 0), "del pago al proveedor"),
     ("Costo en el peor 5 %", f"−{mill(sin6['costo_p95'] - opt6['costo_p95'])}", "frente a no cubrir"),
 ]
-celdas = ",\n".join(
-    f'tarjeta("{t}", "{v}", "{d}")' for t, v, d in tarjetas)
-cerca = "`" * 3
+celdas = ",\n".join(f'tarjeta("{t}", "{v}", "{d}")' for t, v, d in tarjetas)
 print(f"""
 {cerca}{{=typst}}
-#portada(
-  "Cobertura cambiaria USD/COP para una importadora de Cartagena",
-  "¿Conviene fijar hoy el dólar de los pagos a 3 y 6 meses, y en qué proporción?",
-  "Angel Vega Rodríguez · Germán De Armas · María Valentina Serna · Luis Mario Díaz",
-  "Toma de decisiones basadas en datos · Universidad Tecnológica de Bolívar · Noviembre de 2026",
-)
 #grid(columns: (1fr, 1fr, 1fr, 1fr), gutter: 8pt,
 {celdas}
 )
@@ -98,9 +144,7 @@ print(f"""
 """)
 ```
 
-```{=typst}
-#heading(level: 1)[1. El problema y la decisión]
-```
+## 2. El problema y la decisión
 
 Una importadora mediana de Cartagena paga a sus proveedores del exterior en dólares y vende en pesos. Cuando hace un pedido fija el precio de venta con un margen bruto del `{python} pct(S["margen_objetivo"], 0)` sobre el costo calculado con la TRM presupuestada, pero el pago se hace tres o seis meses después. Si en ese tiempo el dólar sube, la compra se encarece y el margen se reduce sin que la empresa pueda trasladar el aumento. La gerencia considera inaceptable un margen inferior al `{python} pct(S["margen_minimo"], 0)`.
 
@@ -117,7 +161,7 @@ La empresa es hipotética porque las estadísticas de importaciones del DANE no 
 | Probabilidad de margen bajo | Proporción de escenarios con margen bajo el mínimo | Regla de decisión, ligada a la meta del negocio |
 | Ahorro esperado | Costo esperado sin cubrir menos costo con cobertura | Precio que se paga por la protección |
 
-## 2. Datos y preparación
+## 3. Datos y preparación
 
 ```{python}
 #| output: asis
@@ -133,7 +177,7 @@ print(f"""
 
 Las descargas se hacen por código y se guardan en CSV para que el análisis no dependa de que las fuentes respondan. La TRM llegó sin duplicados ni nulos y sus únicos saltos diarios mayores al 4 % son de marzo de 2020, por lo que se conservan. La serie `COP=X` de Yahoo, en cambio, tenía `{python} D["atipicos_yahoo"]` cotizaciones imposibles o alejadas más de 3 % de la TRM, que se marcaron como faltantes. Los mercados de Colombia y EE. UU. no cierran los mismos días, así que todo se alineó con el calendario de la TRM y las relaciones entre variables se midieron con retornos semanales (`{python} D["semanas"]` semanas). FRED bloqueó la descarga automática y se reemplazó por el BIS, que publica las mismas tasas.
 
-## 3. Lo que muestran los datos
+## 4. Análisis exploratorio y modelado
 
 Entre 2015 y 2026 el dólar se movió entre `{python} cop(E["trm_min"], 0)` y `{python} cop(E["trm_max"], 0)` (noviembre de 2022). Su volatilidad anual es de `{python} pct(E["vol_anual"])`, pero en periodos de 21 días llegó a `{python} pct(E["vol_21d_max"], 0)` en marzo de 2020. Los retornos tienen colas más pesadas que una normal (curtosis en exceso de `{python} num(E["curtosis"], 1)`), lo que obliga a modelar escenarios extremos con más cuidado. La prueba de Kruskal-Wallis (p = `{python} num(E["kw_p"], 2)`) no encuentra estacionalidad por mes, así que no hay un mes “barato” para pagar.
 
@@ -149,7 +193,7 @@ Por eso la incertidumbre se modeló directamente con un **GJR-GARCH(1,1) con inn
 ![Ahorro por dólar de cubrir al 100 % a 6 meses, 2015-2026.](figuras/f5_backtest.png){#fig-backtest}
 :::
 
-## 4. Evaluación de decisiones
+## 5. Evaluación de decisiones
 
 **Precio del forward.** Se aproxima con la paridad cubierta de tasas, $F = S_0\,[(1+i_{COP})/(1+i_{USD})]^{T}(1+m)$. Con la tasa del Banco de la República en `{python} pct(M["tasa_cop"], 2)` y la de la Fed en `{python} pct(M["tasa_usd"], 2)`, el forward queda en `{python} cop(M["forward_3"], 2)` a 3 meses y `{python} cop(M["forward_6"], 2)` a 6 meses, ambos por encima del presupuesto. Cubrir no es gratis, cuesta el diferencial de tasas.
 
@@ -176,7 +220,7 @@ print("\n".join(filas))
 
 **Backtest con datos reales.** Si la empresa hubiera cubierto el 100 % cada mes desde 2015, el forward habría salido más barato que esperar en el `{python} pct(bt.loc[6, "prob_cubrir_gano"], 0)` de los meses a 6 meses, con un costo promedio de apenas `{python} pct(-bt.loc[6, "ahorro_medio"], 2)` por dólar. A cambio, la dispersión del costo habría caído de `{python} pct(bt.loc[6, "desv_sin_cubrir"])` a `{python} pct(bt.loc[6, "desv_cubriendo"])` y se habría evitado el peor caso histórico, en el que no cubrir salió `{python} pct(bt.loc[6, "peor_sin_cubrir"], 0)` más caro que el forward.
 
-## 5. Recomendación
+## 6. Recomendación
 
 La empresa debería **cubrir con forward entre el `{python} pct(opt6["cobertura"], 0)` y el `{python} pct(tend6["cobertura"], 0)` del pago a 6 meses** y dejar el resto a la TRM del vencimiento. Para los pagos a 3 meses la cobertura no es necesaria con los supuestos base, aunque cubrir hasta un `{python} pct(tend3["cobertura"], 0)` da margen si se espera que el dólar retome su tendencia. Esta combinación paga una prima pequeña y conocida para eliminar buena parte de la cola de riesgo, que es la que pone en peligro el margen. La decisión debe revisarse cada mes en el tablero. Conviene aumentar la cobertura si la volatilidad condicional sigue por encima del `{python} pct(E["vol_anual"], 0)` histórico, si el petróleo cae con fuerza o si la empresa exige un margen mínimo más alto. Si el diferencial de tasas se reduce, cubrir se vuelve más barato y la proporción puede subir sin mayor costo.
 
@@ -203,8 +247,20 @@ print("La regla responde a lo que la gerencia esté dispuesta a aceptar. La tabl
 print("\n".join(filas))
 ```
 
-## 6. Limitaciones
+## 7. Limitaciones
 
 El forward se aproximó con tasas de política monetaria y no con cotizaciones reales de un banco, que dependen del cliente y del plazo. La empresa y sus supuestos son hipotéticos. El GARCH supone que la dinámica de la volatilidad estimada desde 2015 se mantiene y la deriva del dólar es un supuesto que cambia la recomendación, por eso se presenta como un rango. Las correlaciones con el petróleo son inestables y la regresión explica una parte modesta del movimiento del dólar. El análisis tiene fines académicos y no constituye asesoría financiera.
 
-**Reproducibilidad.** Todo el análisis está en `notebook/analisis_cobertura.ipynb`, que lee los CSV de `datos/` y exporta `resultados/resultados.json`. Las cifras de este documento se leen de ese archivo al compilarlo, y el tablero en Dash usa las mismas simulaciones y funciones, de modo que los tres entregables dan los mismos números.
+## 8. Ejecución del proyecto
+
+El proyecto está en el repositorio [github.com/AngelVR23/cobertura-usd-cop](https://github.com/AngelVR23/cobertura-usd-cop) y el tablero publicado en [Posit Connect Cloud](https://01a2057d-f00e-0325-72e3-2329520e3b87.share.connect.posit.cloud/). Los archivos necesarios son los siguientes.
+
+| Archivo o carpeta | Contenido |
+|:--|:--|
+| `datos/descargar_datos.py` y `datos/crudos/` | Descarga de las fuentes y copia de los datos en CSV |
+| `notebook/analisis_cobertura.ipynb` | ETL, análisis exploratorio, modelos, simulación y recomendación |
+| `resultados/resultados.json` | Cifras que usan este documento y el tablero |
+| `dashboard/` y `app.py` | Tablero en Dash con sus datos y estilos |
+| `documento/documento_tecnico.qmd` | Fuente de este documento en Quarto |
+
+Para reproducirlo se instala el entorno con `pip install -r requirements-notebook.txt`, se ejecuta el notebook de principio a fin (escribe figuras, resultados y datos del tablero), se compila el documento con `quarto render documento/documento_tecnico.qmd` y se abre el tablero con `python app.py` en http://localhost:8050. La semilla fija (`{python} R["semilla"]`) hace que los tres entregables den siempre los mismos números.

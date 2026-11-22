@@ -19,6 +19,18 @@
   #text(fill: rgb("#BFD7EA"), size: 8pt)[#curso]
 ]
 
+// Banda con los logos de la universidad y la escuela
+#let portada-logos(utb, etd) = block(
+  width: 100%, radius: 12pt, inset: (x: 18pt, y: 14pt),
+  fill: gradient.linear(rgb(9, 58, 216), rgb(88, 23, 211), angle: 0deg),
+)[
+  #grid(columns: (1fr, auto, 1fr), column-gutter: 18pt, align: (right + horizon, center + horizon, left + horizon),
+    image(utb, height: 1.55cm),
+    line(angle: 90deg, length: 1.3cm, stroke: 0.8pt + rgb(255, 255, 255, 140)),
+    image(etd, height: 1.55cm),
+  )
+]
+
 // Tarjeta de cifra clave
 #let tarjeta(titulo, valor, detalle) = block(
   width: 100%, radius: 8pt, inset: 8pt, fill: claro, stroke: (left: 3pt + turquesa),
@@ -45,3 +57,6 @@
 )
 #show figure: set block(above: 6pt, below: 6pt)
 #show figure.caption: set text(size: 7.8pt, fill: rgb("#5B6B7F"))
+
+// Índice
+#show outline.entry: it => block(above: 0.9em)[#it]

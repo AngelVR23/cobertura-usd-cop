@@ -1,7 +1,7 @@
 # Cobertura cambiaria USD/COP para una importadora de Cartagena
 
 Proyecto final de Toma de decisiones basadas en datos (UTB).
-Integrantes: Angel Vega Rodríguez, Germán De Armas, María Valentina Serna y Luis Mario Díaz.
+Integrantes: Angel Vega Rodríguez (T00068186), Germán De Armas (T00068765), María Valentina Serna (67756), Luis Mario Díaz (T00069220) y Daniel Castillo (T00091828).
 
 La pregunta es si una importadora que paga en dólares a 3 o 6 meses debe fijar hoy la tasa con un forward y qué porcentaje del pago conviene cubrir.
 
@@ -19,7 +19,8 @@ notebook/
 resultados/
   resultados.json         todas las cifras que usan el documento y el tablero
 documento/
-  documento_tecnico.qmd   documento de 4 páginas (Quarto + Typst)
+  documento_tecnico.qmd   documento técnico (portada, índice y 4 páginas de contenido)
+  estilo.typ, logos/      diseño del PDF y logos de la UTB y la Escuela
   documento_tecnico.pdf   versión compilada
   figuras/                gráficas exportadas por el notebook
 dashboard/
