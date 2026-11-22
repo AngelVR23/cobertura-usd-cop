@@ -5,6 +5,8 @@ Integrantes: Angel Vega Rodríguez, Germán De Armas, María Valentina Serna y L
 
 La pregunta es si una importadora que paga en dólares a 3 o 6 meses debe fijar hoy la tasa con un forward y qué porcentaje del pago conviene cubrir.
 
+Tablero publicado: https://01a2057d-f00e-0325-72e3-2329520e3b87.share.connect.posit.cloud/
+
 ## Estructura
 
 ```
