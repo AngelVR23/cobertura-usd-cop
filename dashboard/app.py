@@ -125,15 +125,15 @@ variacion_30 = SPOT / serie["trm"].asof(serie.index.max() - pd.Timedelta(days=30
 forward_6 = precio_forward(SPOT, M["tasa_cop"], M["tasa_usd"], 6, S["margen_banco"])
 fecha_texto = pd.Timestamp(M["fecha_decision"]).strftime("%d/%m/%Y")
 
-app = Dash(__name__, title="Cobertura USD/COP", update_title=None,
+app = Dash(__name__, title="Cobertura del riesgo cambiario", update_title=None,
            external_stylesheets=["https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"])
 server = app.server
 
 cabecera = html.Header(className="cabecera", children=[
     html.Div(children=[
-        html.Span("USD / COP · Cartagena", className="sobretitulo"),
-        html.H1("¿Cubrir o no cubrir el dólar?"),
-        html.P("Decisión de cobertura con forward para una importadora que paga a sus proveedores en dólares a 3 y 6 meses."),
+        html.Span("USD / COP · Importadora de Cartagena", className="sobretitulo"),
+        html.H1("Cobertura del riesgo cambiario en importaciones"),
+        html.P("Evaluación de contratos forward a 3 y 6 meses para una importadora de Cartagena."),
     ]),
     html.Div(className="cabecera-derecha", children=[
         html.Button(id="boton-tema", className="boton-tema vidrio", n_clicks=0, title="Cambiar entre modo claro y oscuro",
@@ -176,39 +176,39 @@ filtro_fechas = html.Div(className="vidrio filtro", children=[
 
 pestana_contexto = html.Div(children=[
     html.Div(className="rejilla dos", children=[
-        panel("La TRM y su banda de dos desviaciones", "Media móvil de 60 días y Brent en el eje derecho",
+        panel("TRM diaria y Brent", "Media móvil de 60 días, banda de dos desviaciones y Brent en el eje derecho",
               html.Div(children=[
                   dcc.Checklist(id="ver-brent", options=[{"label": " Mostrar Brent", "value": "si"}], value=["si"],
                                 className="interruptor"),
                   dcc.Graph(id="g-trm", config={"displayModeBar": False}),
               ]), "ancho", AYUDAS["trm"]),
-        panel("Tasas e inflación", "El diferencial de tasas es lo que encarece el forward",
+        panel("Tasas e inflación", "Tasas de política e inflación anual de Colombia y EE. UU.",
               dcc.Graph(id="g-macro", config={"displayModeBar": False}), ayuda=AYUDAS["macro"]),
     ]),
-    panel("Rango del dólar en cada año", "Distribución de la TRM diaria por año (el año en curso en ámbar)",
+    panel("Distribución anual de la TRM", "TRM diaria por año, el año en curso en ámbar",
           dcc.Graph(id="g-caja-anual", config={"displayModeBar": False}), ayuda=AYUDAS["caja_anual"]),
 ])
 
 pestana_riesgo = html.Div(children=[
     html.Div(className="rejilla tres", children=[
-        panel("Volatilidad anualizada", "Móvil de 21 días frente al GJR-GARCH condicional",
+        panel("Volatilidad anualizada", "Móvil de 21 días y GJR-GARCH condicional",
               dcc.Graph(id="g-vol", config={"displayModeBar": False}), "ancho", AYUDAS["vol"]),
-        panel("Dólar frente a petróleo", "Retornos semanales con recta de regresión",
+        panel("TRM frente al Brent", "Retornos semanales y recta de regresión",
               dcc.Graph(id="g-dispersion", config={"displayModeBar": False}), ayuda=AYUDAS["dispersion"]),
     ]),
     html.Div(className="rejilla tres", children=[
-        panel("Correlación móvil de 52 semanas", "La relación existe pero cambia de intensidad",
+        panel("Correlación móvil de 52 semanas", "TRM frente a Brent, índice dólar y S&P 500",
               dcc.Graph(id="g-corr", config={"displayModeBar": False}), "ancho", AYUDAS["corr"]),
-        panel("Distribución de retornos semanales", "Colas más pesadas que una normal",
+        panel("Distribución de retornos semanales", "Retornos de la TRM frente a una normal",
               dcc.Graph(id="g-hist", config={"displayModeBar": False}), ayuda=AYUDAS["hist"]),
     ]),
     html.Div(className="rejilla tres", children=[
-        panel("¿Hay meses más caros para pagar?", "Retorno mensual de la TRM según el mes del año",
+        panel("Retorno mensual por mes del año", "Retornos mensuales de la TRM agrupados por mes",
               dcc.Graph(id="g-caja-mes", config={"displayModeBar": False}), "ancho", AYUDAS["caja_mes"]),
         panel("Correlación entre mercados", "Retornos semanales del periodo elegido",
               dcc.Graph(id="g-calor", config={"displayModeBar": False}), ayuda=AYUDAS["calor"]),
     ]),
-    panel("Volatilidad año por año", "Retornos diarios de la TRM en cada año",
+    panel("Retornos diarios por año", "Distribución de los retornos diarios de la TRM",
           dcc.Graph(id="g-caja-retornos", config={"displayModeBar": False}), ayuda=AYUDAS["caja_retornos"]),
 ])
 
@@ -252,15 +252,15 @@ pestana_decision = html.Div(className="decision", children=[
         html.Div(id="kpis-decision", className="kpis"),
         html.Div(id="recomendacion", className="vidrio recomendacion"),
         html.Div(className="rejilla dos-iguales", children=[
-            panel("Distribución del costo en pesos", "Sin cubrir frente a la estrategia elegida",
+            panel("Distribución del costo", "Sin cobertura y con la cobertura elegida",
                   dcc.Graph(id="g-costos", config={"displayModeBar": False}), ayuda=AYUDAS["costos"]),
-            panel("Costo y riesgo según el porcentaje cubierto", "El punto marca la cobertura sugerida por la regla de decisión",
+            panel("Costo y riesgo por nivel de cobertura", "Costo esperado, percentil 95 y cobertura sugerida",
                   dcc.Graph(id="g-curva", config={"displayModeBar": False}), ayuda=AYUDAS["curva"]),
         ]),
         html.Div(className="rejilla dos-iguales", children=[
-            panel("Tornado de sensibilidad", "Utilidad bruta al mover una variable a la vez, la de mayor impacto arriba",
+            panel("Análisis de sensibilidad", "Utilidad bruta al mover una variable a la vez",
                   dcc.Graph(id="g-tornado", config={"displayModeBar": False}), ayuda=AYUDAS["tornado"]),
-            panel("Costo según el porcentaje cubierto", "Distribución de los 10.000 escenarios para cada nivel de cobertura",
+            panel("Costo por nivel de cobertura", "10.000 escenarios por cada porcentaje cubierto",
                   dcc.Graph(id="g-caja-costos", config={"displayModeBar": False}), ayuda=AYUDAS["caja_costos"]),
         ]),
     ]),
@@ -273,7 +273,7 @@ pestana_backtest = html.Div(children=[
                        value=6, className="pastillas", inline=True),
     ]),
     html.Div(id="kpis-backtest", className="kpis"),
-    panel("¿Qué habría pasado si la empresa cubría cada mes desde 2015?",
+    panel("Backtest de la cobertura, 2015-2026",
           "Ahorro por dólar de cubrir al 100 % frente a pagar a la TRM del vencimiento (verde = cubrir salió más barato)",
           dcc.Graph(id="g-backtest", config={"displayModeBar": False}), ayuda=AYUDAS["backtest"]),
 ])

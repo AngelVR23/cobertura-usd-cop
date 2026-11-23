@@ -1,7 +1,9 @@
-# Cobertura cambiaria USD/COP para una importadora de Cartagena
+# Cobertura del riesgo cambiario en importaciones
+
+Evaluación de contratos forward a 3 y 6 meses para una importadora de Cartagena.
 
 Proyecto final de Toma de decisiones basadas en datos (UTB).
-Integrantes: Angel Vega Rodríguez (T00068186), Germán De Armas (T00068765), María Valentina Serna (T00067756), Luis Mario Díaz (T00069220) y Daniel Castillo (T00091828).
+Integrantes: Ángel Luis Vega Rodríguez (T00068186), Germán Eduardo De Armas Castaño (T00068765), María Valentina Serna (T00067756), Luis Mario Díaz (T00069220) y Daniel Castillo (T00091828).
 
 La pregunta es si una importadora que paga en dólares a 3 o 6 meses debe fijar hoy la tasa con un forward y qué porcentaje del pago conviene cubrir.
 

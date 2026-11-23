@@ -75,43 +75,48 @@ fecha_txt = f"{fecha.day} de {meses[fecha.month - 1]} de {fecha.year}"
 #| output: asis
 ## Portada e índice
 INTEGRANTES = [
-    ("Angel Vega Rodríguez", "T00068186"),
-    ("Germán De Armas", "T00068765"),
+    ("Ángel Luis Vega Rodríguez", "T00068186"),
+    ("Germán Eduardo De Armas Castaño", "T00068765"),
     ("María Valentina Serna", "T00067756"),
     ("Luis Mario Díaz", "T00069220"),
     ("Daniel Castillo", "T00091828"),
 ]
-filas_integrantes = ", ".join(f"[{n}], [{c}]" for n, c in INTEGRANTES)
+autores = "\n".join(
+    f'  #text(size: 12pt)[{n}] #linebreak() #text(size: 10.5pt)[Código {c}] #v(5pt)' for n, c in INTEGRANTES)
 cerca = "`" * 3
 print(f"""
 {cerca}{{=typst}}
-#set page(numbering: none, margin: (x: 2.2cm, y: 2cm))
-#portada-logos("logos/logo_utb.png", "logos/logo_etd.png")
-#v(1fr)
+#set page(numbering: none, margin: (x: 2.5cm, y: 2.2cm))
+#set text(font: ("Cambria", "Georgia", "Segoe UI"))
+#v(0.4cm)
+#align(center)[#block(width: 78%)[#portada-logos("logos/logo_utb.png", "logos/logo_etd.png")]]
+#v(1.3cm)
 #align(center)[
-  #text(size: 9pt, tracking: 2pt, fill: turquesa, weight: "bold")[DOCUMENTO TÉCNICO · PROYECTO FINAL]
-  #v(8pt)
-  #text(size: 24pt, weight: "bold", fill: azul)[Cobertura cambiaria USD/COP #linebreak() para una importadora de Cartagena]
-  #v(8pt)
-  #text(size: 12pt, style: "italic", fill: rgb("#4A5A70"))[¿Conviene fijar hoy el dólar de los pagos a 3 y 6 meses, y en qué proporción?]
+  #line(length: 68%, stroke: 1pt + rgb("#1A3C8F"))
+  #v(4pt)
+  #text(size: 12pt, weight: "bold", fill: rgb("#1B1B1B"))[PROYECTO FINAL DE TOMA DE DECISIONES BASADAS EN DATOS] #linebreak()
+  #text(size: 10.5pt, fill: rgb("#333333"))[Escuela de Transformación Digital]
+  #v(1.6cm)
+  #text(size: 23pt, weight: "bold", fill: rgb("#0B2D8A"))[Cobertura del riesgo cambiario #linebreak() en importaciones]
+  #v(6pt)
+  #text(size: 12pt, fill: rgb("#555555"))[Evaluación de contratos forward a 3 y 6 meses para una importadora de Cartagena]
+  #v(1.1cm)
+  #text(size: 10pt, fill: rgb("#7A7A7A"))[Autores]
+  #v(2pt)
+{autores}
+  #v(0.7cm)
+  #text(size: 10pt, fill: rgb("#7A7A7A"))[Profesor de curso] #linebreak()
+  #text(size: 12pt)[Fernando Salcedo Mejía]
 ]
 #v(1fr)
 #align(center)[
-  #block(width: 62%)[
-    #set text(size: 10pt)
-    #table(columns: (1fr, auto), align: (left, center), inset: 6pt,
-      [Integrante], [Código], {filas_integrantes})
-  ]
+  #line(length: 68%, stroke: 1pt + rgb("#1A3C8F"))
+  #v(4pt)
+  #text(size: 12pt, weight: "bold")[Universidad Tecnológica de Bolívar] #linebreak()
+  #text(size: 10.5pt)[Cartagena de Indias, Colombia] #linebreak()
+  #text(size: 10.5pt)[Noviembre 2026]
 ]
-#v(1fr)
-#align(center)[
-  #set text(size: 10pt, fill: rgb("#33415A"))
-  *Toma de decisiones basadas en datos* #linebreak()
-  Profesor Fernando Salcedo Mejía #linebreak()
-  Programa de Ciencia de Datos · Escuela de Transformación Digital #linebreak()
-  Universidad Tecnológica de Bolívar #linebreak()
-  Cartagena de Indias, noviembre de 2026
-]
+#set text(font: ("Segoe UI",))
 #pagebreak()
 #outline(title: [Índice], indent: 0pt, depth: 2)
 #set page(numbering: "1", margin: (x: 1.7cm, y: 1.5cm))
@@ -144,7 +149,7 @@ print(f"""
 """)
 ```
 
-## 2. El problema y la decisión
+## 2. Planteamiento del problema
 
 Una importadora mediana de Cartagena paga a sus proveedores del exterior en dólares y vende en pesos. Cuando hace un pedido fija el precio de venta con un margen bruto del `{python} pct(S["margen_objetivo"], 0)` sobre el costo calculado con la TRM presupuestada, pero el pago se hace tres o seis meses después. Si en ese tiempo el dólar sube, la compra se encarece y el margen se reduce sin que la empresa pueda trasladar el aumento. La gerencia considera inaceptable un margen inferior al `{python} pct(S["margen_minimo"], 0)`.
 
