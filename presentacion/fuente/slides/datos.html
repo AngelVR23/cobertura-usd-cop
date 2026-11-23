@@ -1,0 +1,18 @@
+<section id="datos">
+<div class="titulo">
+<p class="ceja">DATOS Y PREPARACIÓN</p>
+<h2>Tres fuentes reales, descargadas por código</h2>
+</div>
+<div class="fila">
+<div class="tarjeta entra" style="--i:0;"><h3>Superfinanciera</h3><p class="etq">TRM oficial diaria desde datos.gov.co. Es la tasa con la que se liquida la compra.</p></div>
+<div class="tarjeta entra" style="--i:1;"><h3>Yahoo Finance</h3><p class="etq">Dólar de mercado, Brent, WTI, índice dólar, Ecopetrol, S&amp;P 500 y oro.</p></div>
+<div class="tarjeta entra" style="--i:2;"><h3>Banco de Pagos Internacionales</h3><p class="etq">Tasas de política del BanRep y la Fed, inflación de Colombia y EE. UU.</p></div>
+</div>
+<div class="fila entra" style="--i:3;">
+<div class="columna crece" style="gap:4px;"><p class="num turquesa">2.815</p><p class="etq">datos diarios de TRM, 2015 a 2026, sin duplicados ni nulos</p></div>
+<div class="columna crece" style="gap:4px;"><p class="num rojo">14</p><p class="etq">cotizaciones erróneas de Yahoo detectadas contra la TRM</p></div>
+<div class="columna crece" style="gap:4px;"><p class="num">621</p><p class="etq">semanas alineadas para medir relaciones entre mercados</p></div>
+</div>
+<div class="pie"><span>Todo queda guardado en CSV para no depender de las fuentes el día de la sustentación</span><span class="pag"></span></div>
+<aside>Usamos datos reales. La TRM viene de la Superfinanciera en datos.gov.co, los mercados de Yahoo Finance y las tasas del BIS, porque FRED bloqueó la descarga automática. En el ETL encontramos 14 cotizaciones de Yahoo imposibles, algunas de 24 pesos por dólar, y las excluimos. Como los mercados de Colombia y EE. UU. no cierran los mismos días, medimos las relaciones con datos semanales.</aside>
+</section>
